@@ -23,9 +23,7 @@ func Listen(conn *net.UDPConn) {
 func Write(conn *net.UDPConn) {
 	for {
 		reader := bufio.NewReader(os.Stdin)
-		fmt.Print("Enter text: ")
 		text, _ := reader.ReadString('\n')
-		fmt.Println("You entered:", text)
 		conn.Write([]byte(text))
 		time.Sleep(TIMEOUT)
 	}
@@ -46,19 +44,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	outConn, err := net.DialUDP("udp", nil, remoteAddr)
-	if err != nil {
-		log.Fatal(err)
-	}
-	inConn, err := net.ListenUDP("udp", localAddr)
+	conn, err := net.DialUDP("udp", localAddr, remoteAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	go Write(outConn)
-	go Listen(inConn)
+	go Write(conn)
+	go Listen(conn)
 
 	select {}
-
 
 }
